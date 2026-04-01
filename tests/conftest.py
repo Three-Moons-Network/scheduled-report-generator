@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 
 import boto3
 import pytest
-from moto import mock_dynamodb, mock_ssm
+from moto import mock_aws
 
 
 @pytest.fixture
@@ -23,7 +23,7 @@ def aws_credentials(monkeypatch):
 @pytest.fixture
 def mock_dynamodb_tables(aws_credentials):
     """Create mock DynamoDB tables for testing."""
-    with mock_dynamodb():
+    with mock_aws():
         dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
 
         # Create orders table
@@ -61,7 +61,7 @@ def mock_dynamodb_tables(aws_credentials):
 @pytest.fixture
 def mock_ssm_params(aws_credentials):
     """Create mock SSM parameters for testing."""
-    with mock_ssm():
+    with mock_aws():
         ssm = boto3.client("ssm", region_name="us-east-1")
 
         # Create test parameters
