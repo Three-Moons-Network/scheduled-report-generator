@@ -1,0 +1,429 @@
+"""
+Report Template Rendering
+
+Provides HTML templates for daily summaries, weekly digests, and monthly reviews.
+Renders templates with business data and Claude-generated insights.
+"""
+
+from __future__ import annotations
+
+import json
+from typing import Any
+
+# HTML template styles
+STYLES = """
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+    .header h1 {
+        margin: 0 0 10px 0;
+        font-size: 28px;
+    }
+    .header p {
+        margin: 0;
+        opacity: 0.95;
+        font-size: 14px;
+    }
+    .section {
+        margin-bottom: 30px;
+        border-left: 4px solid #667eea;
+        padding-left: 20px;
+    }
+    .section h2 {
+        margin-top: 0;
+        font-size: 20px;
+        color: #667eea;
+    }
+    .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin: 20px 0;
+    }
+    .metric-card {
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 6px;
+        text-align: center;
+    }
+    .metric-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #667eea;
+    }
+    .metric-label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        margin-top: 5px;
+    }
+    .insights {
+        background: #f0f4ff;
+        padding: 20px;
+        border-radius: 6px;
+        line-height: 1.8;
+    }
+    .insights p {
+        margin: 12px 0;
+        font-size: 14px;
+    }
+    .footer {
+        text-align: center;
+        border-top: 1px solid #ddd;
+        padding-top: 20px;
+        margin-top: 30px;
+        font-size: 12px;
+        color: #999;
+    }
+    .status-open { color: #e74c3c; }
+    .status-in-progress { color: #f39c12; }
+    .status-resolved { color: #27ae60; }
+</style>
+"""
+
+
+def render_daily_summary(context: dict[str, Any]) -> str:
+    """Render HTML template for daily summary report."""
+    orders = context.get("orders_count", 0)
+    revenue = context.get("orders_total_amount", 0)
+    tickets = context.get("tickets_count", 0)
+    tickets_by_status = context.get("tickets_by_status", {})
+    metrics = context.get("metrics", {})
+    insights = context.get("insights", "")
+    generated_at = context.get("generated_at", "")
+    timezone = context.get("timezone", "UTC")
+
+    # Format ticket status breakdown
+    ticket_status_html = "".join(
+        f'<tr><td>{status}</td><td style="text-align: right;">{count}</td></tr>'
+        for status, count in tickets_by_status.items()
+    )
+
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {STYLES}
+</head>
+<body>
+    <div class="header">
+        <h1>Daily Business Summary</h1>
+        <p>Generated on {generated_at} ({timezone})</p>
+    </div>
+
+    <div class="section">
+        <h2>Key Metrics (Last 24 Hours)</h2>
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-value">{orders}</div>
+                <div class="metric-label">Orders</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">${revenue:,.0f}</div>
+                <div class="metric-label">Revenue</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{tickets}</div>
+                <div class="metric-label">Support Tickets</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{metrics.get('uptime_percentage', 99.9):.1f}%</div>
+                <div class="metric-label">Uptime</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Support Tickets by Status</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f5f5f5;">
+                    <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;">Status</th>
+                    <th style="text-align: right; padding: 10px; border-bottom: 1px solid #ddd;">Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {ticket_status_html}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>AI-Generated Insights</h2>
+        <div class="insights">
+            {insights.replace(chr(10), '</p><p>')}
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>This is an automated report generated by Three Moons Network.</p>
+        <p>Questions? Contact your account manager.</p>
+    </div>
+</body>
+</html>"""
+
+
+def render_weekly_digest(context: dict[str, Any]) -> str:
+    """Render HTML template for weekly digest report."""
+    orders = context.get("orders_count", 0)
+    revenue = context.get("orders_total_amount", 0)
+    tickets = context.get("tickets_count", 0)
+    tickets_by_status = context.get("tickets_by_status", {})
+    metrics = context.get("metrics", {})
+    insights = context.get("insights", "")
+    generated_at = context.get("generated_at", "")
+    timezone = context.get("timezone", "UTC")
+
+    ticket_status_html = "".join(
+        f'<tr><td>{status}</td><td style="text-align: right;">{count}</td></tr>'
+        for status, count in tickets_by_status.items()
+    )
+
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {STYLES}
+</head>
+<body>
+    <div class="header">
+        <h1>Weekly Business Digest</h1>
+        <p>Generated on {generated_at} ({timezone})</p>
+        <p>Report Period: Last 7 Days</p>
+    </div>
+
+    <div class="section">
+        <h2>Weekly Performance</h2>
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-value">{orders}</div>
+                <div class="metric-label">Total Orders</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">${revenue:,.0f}</div>
+                <div class="metric-label">Total Revenue</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{tickets}</div>
+                <div class="metric-label">Support Tickets</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">${revenue / max(orders, 1):,.0f}</div>
+                <div class="metric-label">Avg Order Value</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Support Ticket Trends</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f5f5f5;">
+                    <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;">Status</th>
+                    <th style="text-align: right; padding: 10px; border-bottom: 1px solid #ddd;">Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {ticket_status_html}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Key Insights & Recommendations</h2>
+        <div class="insights">
+            {insights.replace(chr(10), '</p><p>')}
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>System Health</h2>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+            <div>
+                <strong>Uptime</strong><br>
+                <span style="font-size: 20px; color: #27ae60;">{metrics.get('uptime_percentage', 99.9):.1f}%</span>
+            </div>
+            <div>
+                <strong>Error Rate</strong><br>
+                <span style="font-size: 20px; color: #27ae60;">{metrics.get('error_rate', 0) * 100:.2f}%</span>
+            </div>
+            <div>
+                <strong>Customer Satisfaction</strong><br>
+                <span style="font-size: 20px; color: #667eea;">{metrics.get('customer_satisfaction', 4.7):.1f}/5.0</span>
+            </div>
+            <div>
+                <strong>API Calls</strong><br>
+                <span style="font-size: 20px; color: #667eea;">{metrics.get('api_calls', 0):,}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>This is an automated report generated by Three Moons Network.</p>
+        <p>Questions? Contact your account manager.</p>
+    </div>
+</body>
+</html>"""
+
+
+def render_monthly_review(context: dict[str, Any]) -> str:
+    """Render HTML template for monthly review report."""
+    orders = context.get("orders_count", 0)
+    revenue = context.get("orders_total_amount", 0)
+    tickets = context.get("tickets_count", 0)
+    tickets_by_status = context.get("tickets_by_status", {})
+    metrics = context.get("metrics", {})
+    insights = context.get("insights", "")
+    generated_at = context.get("generated_at", "")
+    timezone = context.get("timezone", "UTC")
+
+    ticket_status_html = "".join(
+        f'<tr><td>{status}</td><td style="text-align: right;">{count}</td></tr>'
+        for status, count in tickets_by_status.items()
+    )
+
+    avg_daily_orders = orders / 30 if orders > 0 else 0
+    avg_daily_revenue = revenue / 30 if revenue > 0 else 0
+
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {STYLES}
+</head>
+<body>
+    <div class="header">
+        <h1>Monthly Business Review</h1>
+        <p>Generated on {generated_at} ({timezone})</p>
+        <p>Report Period: Last 30 Days</p>
+    </div>
+
+    <div class="section">
+        <h2>Monthly Performance Summary</h2>
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-value">{orders}</div>
+                <div class="metric-label">Total Orders</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">${revenue:,.0f}</div>
+                <div class="metric-label">Total Revenue</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{avg_daily_orders:.1f}</div>
+                <div class="metric-label">Avg Orders/Day</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">${avg_daily_revenue:,.0f}</div>
+                <div class="metric-label">Avg Revenue/Day</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Support Metrics</h2>
+        <div style="background: #f5f5f5; padding: 15px; border-radius: 6px;">
+            <p><strong>Total Tickets:</strong> {tickets}</p>
+            <p><strong>Status Breakdown:</strong></p>
+            <table style="width: 100%; margin-top: 10px;">
+                <thead>
+                    <tr style="background: white;">
+                        <th style="text-align: left; padding: 8px;">Status</th>
+                        <th style="text-align: right; padding: 8px;">Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {ticket_status_html}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Strategic Insights & Analysis</h2>
+        <div class="insights">
+            {insights.replace(chr(10), '</p><p>')}
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>30-Day System Health Report</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>System Uptime</strong></td>
+                <td style="text-align: right; padding: 12px; border-bottom: 1px solid #ddd;"><span style="color: #27ae60; font-weight: bold;">{metrics.get('uptime_percentage', 99.9):.2f}%</span></td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Error Rate</strong></td>
+                <td style="text-align: right; padding: 12px; border-bottom: 1px solid #ddd;"><span style="color: #27ae60; font-weight: bold;">{metrics.get('error_rate', 0) * 100:.3f}%</span></td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Customer Satisfaction</strong></td>
+                <td style="text-align: right; padding: 12px; border-bottom: 1px solid #ddd;"><span style="color: #667eea; font-weight: bold;">{metrics.get('customer_satisfaction', 4.7):.1f}/5.0</span></td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Total API Calls</strong></td>
+                <td style="text-align: right; padding: 12px; border-bottom: 1px solid #ddd;"><span style="font-weight: bold;">{metrics.get('api_calls', 0):,}</span></td>
+            </tr>
+            <tr>
+                <td style="padding: 12px;"><strong>Database Queries</strong></td>
+                <td style="text-align: right; padding: 12px;"><span style="font-weight: bold;">{metrics.get('database_queries', 0):,}</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p><strong>This monthly review was generated by Three Moons Network AI Analytics.</strong></p>
+        <p>Use these insights to guide your business strategy and operational improvements.</p>
+        <p>For more detailed analysis or custom reports, contact your account manager.</p>
+    </div>
+</body>
+</html>"""
+
+
+# Template registry
+REPORT_TEMPLATES = {
+    "daily_summary": render_daily_summary,
+    "weekly_digest": render_weekly_digest,
+    "monthly_review": render_monthly_review,
+}
+
+
+def render_report_html(template_name: str, context: dict[str, Any]) -> str:
+    """
+    Render an HTML report using the specified template.
+
+    Args:
+        template_name: One of 'daily_summary', 'weekly_digest', 'monthly_review'
+        context: Dict with metrics, insights, timezone, etc.
+
+    Returns:
+        Rendered HTML string.
+
+    Raises:
+        ValueError: If template_name is not recognized.
+    """
+    if template_name not in REPORT_TEMPLATES:
+        raise ValueError(
+            f"Unknown template '{template_name}'. "
+            f"Valid options: {', '.join(REPORT_TEMPLATES.keys())}"
+        )
+
+    render_fn = REPORT_TEMPLATES[template_name]
+    return render_fn(context)
