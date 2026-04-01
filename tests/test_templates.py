@@ -36,7 +36,7 @@ class TestDailySummaryTemplate:
 
         assert "Daily Business Summary" in html
         assert "15" in html  # orders
-        assert "3500" in html  # revenue
+        assert "$3,500" in html  # revenue (formatted with comma)
         assert "8" in html  # tickets
         assert "99.9" in html  # uptime
         assert "Business is performing well" in html
@@ -58,7 +58,7 @@ class TestDailySummaryTemplate:
 
         assert "Daily Business Summary" in html
         assert "5" in html
-        assert "1000" in html
+        assert "$1,000" in html  # revenue (formatted with comma)
 
 
 class TestWeeklyDigestTemplate:
@@ -84,10 +84,10 @@ class TestWeeklyDigestTemplate:
 
         assert "Weekly Business Digest" in html
         assert "100" in html  # orders
-        assert "25000" in html  # revenue
-        assert "250" in html  # avg order value
+        assert "$25,000" in html  # revenue (formatted with comma)
+        assert "$250" in html  # avg order value (formatted)
         assert "42" in html  # tickets
-        assert "99.95" in html  # uptime
+        assert "100.0%" in html  # uptime (rounded to 1 decimal place)
         assert "Weekly trends" in html
 
 
@@ -119,11 +119,11 @@ class TestMonthlyReviewTemplate:
 
         assert "Monthly Business Review" in html
         assert "450" in html  # orders
-        assert "112500" in html  # revenue
+        assert "$112,500" in html  # revenue (formatted with comma)
         assert "185" in html  # tickets
         assert "99.98" in html  # uptime
-        assert "500000" in html  # API calls
-        assert "1000000" in html  # database queries
+        assert "500,000" in html  # API calls (formatted with comma)
+        assert "1,000,000" in html  # database queries (formatted with comma)
         assert "Strong month" in html
 
 
