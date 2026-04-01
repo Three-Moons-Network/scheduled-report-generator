@@ -177,12 +177,11 @@ resource "aws_iam_role_policy" "lambda" {
 # ---------------------------------------------------------------------------
 
 resource "aws_dynamodb_table" "orders" {
-  name           = "orders"
-  billing_mode   = var.dynamodb_billing_mode
-  hash_key       = "order_id"
-  stream_specification {
-    stream_view_type = "NEW_AND_OLD_IMAGES"
-  }
+  name             = "orders"
+  billing_mode     = var.dynamodb_billing_mode
+  hash_key         = "order_id"
+  stream_enabled   = true
+  stream_view_type = "NEW_AND_OLD_IMAGES"
 
   attribute {
     name = "order_id"
@@ -199,12 +198,11 @@ resource "aws_dynamodb_table" "orders" {
 }
 
 resource "aws_dynamodb_table" "support_tickets" {
-  name           = "support_tickets"
-  billing_mode   = var.dynamodb_billing_mode
-  hash_key       = "ticket_id"
-  stream_specification {
-    stream_view_type = "NEW_AND_OLD_IMAGES"
-  }
+  name             = "support_tickets"
+  billing_mode     = var.dynamodb_billing_mode
+  hash_key         = "ticket_id"
+  stream_enabled   = true
+  stream_view_type = "NEW_AND_OLD_IMAGES"
 
   attribute {
     name = "ticket_id"
@@ -221,12 +219,11 @@ resource "aws_dynamodb_table" "support_tickets" {
 }
 
 resource "aws_dynamodb_table" "business_metrics" {
-  name           = "business_metrics"
-  billing_mode   = var.dynamodb_billing_mode
-  hash_key       = "metric_id"
-  stream_specification {
-    stream_view_type = "NEW_AND_OLD_IMAGES"
-  }
+  name             = "business_metrics"
+  billing_mode     = var.dynamodb_billing_mode
+  hash_key         = "metric_id"
+  stream_enabled   = true
+  stream_view_type = "NEW_AND_OLD_IMAGES"
 
   attribute {
     name = "metric_id"
@@ -273,13 +270,13 @@ resource "aws_lambda_function" "report_generator" {
 
   environment {
     variables = {
-      ENVIRONMENT        = var.environment
-      ANTHROPIC_MODEL    = var.anthropic_model
-      MAX_TOKENS         = tostring(var.max_tokens)
-      REPORT_TYPE        = var.report_type
-      TIMEZONE           = var.report_timezone
-      ANTHROPIC_API_KEY  = var.anthropic_api_key
-      LOG_LEVEL          = var.environment == "prod" ? "WARNING" : "INFO"
+      ENVIRONMENT       = var.environment
+      ANTHROPIC_MODEL   = var.anthropic_model
+      MAX_TOKENS        = tostring(var.max_tokens)
+      REPORT_TYPE       = var.report_type
+      TIMEZONE          = var.report_timezone
+      ANTHROPIC_API_KEY = var.anthropic_api_key
+      LOG_LEVEL         = var.environment == "prod" ? "WARNING" : "INFO"
     }
   }
 

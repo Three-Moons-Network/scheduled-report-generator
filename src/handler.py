@@ -13,16 +13,16 @@ from __future__ import annotations
 import json
 import logging
 import os
-from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta
+from dataclasses import dataclass
+from datetime import datetime
 from typing import Any
 
 import anthropic
 import boto3
-from botocore.exceptions import BotoCoreError, ClientError
+from botocore.exceptions import ClientError
 
 from src.dynamodb_queries import DynamoDBQueryHelper
-from src.report_templates import REPORT_TEMPLATES, render_report_html
+from src.report_templates import render_report_html
 
 logger = logging.getLogger(__name__)
 logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
@@ -164,7 +164,7 @@ def generate_insights_with_claude(context: ReportContext) -> str:
     client = anthropic.Anthropic()
 
     system_prompt = f"""You are a business intelligence analyst. Generate a concise,
-actionable {context.report_type.replace('_', ' ')} report based on the provided business data.
+actionable {context.report_type.replace("_", " ")} report based on the provided business data.
 
 Focus on:
 - Key trends and changes from the previous period

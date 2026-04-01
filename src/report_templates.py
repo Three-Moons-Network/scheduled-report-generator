@@ -7,7 +7,6 @@ Renders templates with business data and Claude-generated insights.
 
 from __future__ import annotations
 
-import json
 from typing import Any
 
 # HTML template styles
@@ -141,7 +140,7 @@ def render_daily_summary(context: dict[str, Any]) -> str:
                 <div class="metric-label">Support Tickets</div>
             </div>
             <div class="metric-card">
-                <div class="metric-value">{metrics.get('uptime_percentage', 99.9):.1f}%</div>
+                <div class="metric-value">{metrics.get("uptime_percentage", 99.9):.1f}%</div>
                 <div class="metric-label">Uptime</div>
             </div>
         </div>
@@ -165,7 +164,7 @@ def render_daily_summary(context: dict[str, Any]) -> str:
     <div class="section">
         <h2>AI-Generated Insights</h2>
         <div class="insights">
-            {insights.replace(chr(10), '</p><p>')}
+            {insights.replace(chr(10), "</p><p>")}
         </div>
     </div>
 
@@ -247,7 +246,7 @@ def render_weekly_digest(context: dict[str, Any]) -> str:
     <div class="section">
         <h2>Key Insights & Recommendations</h2>
         <div class="insights">
-            {insights.replace(chr(10), '</p><p>')}
+            {insights.replace(chr(10), "</p><p>")}
         </div>
     </div>
 
@@ -256,19 +255,19 @@ def render_weekly_digest(context: dict[str, Any]) -> str:
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
             <div>
                 <strong>Uptime</strong><br>
-                <span style="font-size: 20px; color: #27ae60;">{metrics.get('uptime_percentage', 99.9):.1f}%</span>
+                <span style="font-size: 20px; color: #27ae60;">{metrics.get("uptime_percentage", 99.9):.1f}%</span>
             </div>
             <div>
                 <strong>Error Rate</strong><br>
-                <span style="font-size: 20px; color: #27ae60;">{metrics.get('error_rate', 0) * 100:.2f}%</span>
+                <span style="font-size: 20px; color: #27ae60;">{metrics.get("error_rate", 0) * 100:.2f}%</span>
             </div>
             <div>
                 <strong>Customer Satisfaction</strong><br>
-                <span style="font-size: 20px; color: #667eea;">{metrics.get('customer_satisfaction', 4.7):.1f}/5.0</span>
+                <span style="font-size: 20px; color: #667eea;">{metrics.get("customer_satisfaction", 4.7):.1f}/5.0</span>
             </div>
             <div>
                 <strong>API Calls</strong><br>
-                <span style="font-size: 20px; color: #667eea;">{metrics.get('api_calls', 0):,}</span>
+                <span style="font-size: 20px; color: #667eea;">{metrics.get("api_calls", 0):,}</span>
             </div>
         </div>
     </div>
@@ -358,7 +357,7 @@ def render_monthly_review(context: dict[str, Any]) -> str:
     <div class="section">
         <h2>Strategic Insights & Analysis</h2>
         <div class="insights">
-            {insights.replace(chr(10), '</p><p>')}
+            {insights.replace(chr(10), "</p><p>")}
         </div>
     </div>
 
@@ -367,23 +366,23 @@ def render_monthly_review(context: dict[str, Any]) -> str:
         <table style="width: 100%; border-collapse: collapse;">
             <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>System Uptime</strong></td>
-                <td style="text-align: right; padding: 12px; border-bottom: 1px solid #ddd;"><span style="color: #27ae60; font-weight: bold;">{metrics.get('uptime_percentage', 99.9):.2f}%</span></td>
+                <td style="text-align: right; padding: 12px; border-bottom: 1px solid #ddd;"><span style="color: #27ae60; font-weight: bold;">{metrics.get("uptime_percentage", 99.9):.2f}%</span></td>
             </tr>
             <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Error Rate</strong></td>
-                <td style="text-align: right; padding: 12px; border-bottom: 1px solid #ddd;"><span style="color: #27ae60; font-weight: bold;">{metrics.get('error_rate', 0) * 100:.3f}%</span></td>
+                <td style="text-align: right; padding: 12px; border-bottom: 1px solid #ddd;"><span style="color: #27ae60; font-weight: bold;">{metrics.get("error_rate", 0) * 100:.3f}%</span></td>
             </tr>
             <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Customer Satisfaction</strong></td>
-                <td style="text-align: right; padding: 12px; border-bottom: 1px solid #ddd;"><span style="color: #667eea; font-weight: bold;">{metrics.get('customer_satisfaction', 4.7):.1f}/5.0</span></td>
+                <td style="text-align: right; padding: 12px; border-bottom: 1px solid #ddd;"><span style="color: #667eea; font-weight: bold;">{metrics.get("customer_satisfaction", 4.7):.1f}/5.0</span></td>
             </tr>
             <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Total API Calls</strong></td>
-                <td style="text-align: right; padding: 12px; border-bottom: 1px solid #ddd;"><span style="font-weight: bold;">{metrics.get('api_calls', 0):,}</span></td>
+                <td style="text-align: right; padding: 12px; border-bottom: 1px solid #ddd;"><span style="font-weight: bold;">{metrics.get("api_calls", 0):,}</span></td>
             </tr>
             <tr>
                 <td style="padding: 12px;"><strong>Database Queries</strong></td>
-                <td style="text-align: right; padding: 12px;"><span style="font-weight: bold;">{metrics.get('database_queries', 0):,}</span></td>
+                <td style="text-align: right; padding: 12px;"><span style="font-weight: bold;">{metrics.get("database_queries", 0):,}</span></td>
             </tr>
         </table>
     </div>

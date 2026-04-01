@@ -38,9 +38,7 @@ def mock_dynamodb_tables(aws_credentials):
         tickets_table = dynamodb.create_table(
             TableName="support_tickets",
             KeySchema=[{"AttributeName": "ticket_id", "KeyType": "HASH"}],
-            AttributeDefinitions=[
-                {"AttributeName": "ticket_id", "AttributeType": "S"}
-            ],
+            AttributeDefinitions=[{"AttributeName": "ticket_id", "AttributeType": "S"}],
             BillingMode="PAY_PER_REQUEST",
         )
 
