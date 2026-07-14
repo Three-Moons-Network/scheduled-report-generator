@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: scheduled-report-generator
+  description: >
+    Automated business reporting — EventBridge-triggered Lambda queries DynamoDB, Claude generates natural-language insights, delivers HTML reports via SES.
+  annotations:
+    github.com/project-slug: Three-Moons-Network/scheduled-report-generator
+  tags:
+    - ai
+    - aws
+    - lambda
+    - python
+    - ses
+    - terraform
+spec:
+  type: service
+  lifecycle: experimental
+  owner: user:linuxlsr
